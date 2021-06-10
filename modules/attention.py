@@ -37,7 +37,7 @@ class ScaleDotProductAttention(nn.Module):
         return output, attention
 
 
-class MultiHeadAttention(nn.Module):
+class CustomMultiHeadAttention(nn.Module):
     def __init__(self, dim, n_head, bias=True):
         """
         Multi Head attention class
@@ -45,7 +45,7 @@ class MultiHeadAttention(nn.Module):
         :param n_head: Number of head
         :param bias: Use bias or not
         """
-        super(MultiHeadAttention, self).__init__()
+        super(CustomMultiHeadAttention, self).__init__()
         self.n_head = n_head
         self.dim = dim
         self.attention = ScaleDotProductAttention()
@@ -96,7 +96,7 @@ class MultiHeadAttention(nn.Module):
 
 if __name__ == '__main__':
     sc = ScaleDotProductAttention()
-    mh = MultiHeadAttention(50, 5)
+    mh = CustomMultiHeadAttention(50, 5)
     # x = torch.zeros((3, 3, 100, 50), requires_grad=True)
     x = torch.zeros((3, 100, 50), requires_grad=True)
 
