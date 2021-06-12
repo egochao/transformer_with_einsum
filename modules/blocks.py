@@ -5,10 +5,15 @@ from torch.nn import LayerNorm
 
 
 class CustomLayerNorm(nn.Module):
-    def __init__(self, d_model, eps=1e-12):
+    def __init__(self, dim, eps=1e-12):
+        """
+        Custom normalization of last tensor dimension
+        :param dim: Embedding dimension
+        :param eps: Avoid divide for zero
+        """
         super(CustomLayerNorm, self).__init__()
-        self.gamma = nn.Parameter(torch.ones(d_model))
-        self.beta = nn.Parameter(torch.zeros(d_model))
+        self.gamma = nn.Parameter(torch.ones(dim))
+        self.beta = nn.Parameter(torch.zeros(dim))
         self.eps = eps
 
     def forward(self, x):

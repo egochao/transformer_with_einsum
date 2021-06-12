@@ -8,7 +8,7 @@ from .position_layers import PositionEncoding
 class CustomEncoderLayer(nn.Module):
     def __init__(self, dim, n_head, ffn_hidden=None, dropout=0.0):
         """
-        Encoder Block
+        Encoder block
         :param dim: Embedding dimension
         :param n_head: Number of head in multi head attention
         :param ffn_hidden: Number of hidden nodes of feed forward layer
@@ -19,7 +19,7 @@ class CustomEncoderLayer(nn.Module):
         self.norm1 = CustomLayerNorm(dim)
         self.dropout1 = nn.Dropout(p=dropout)
 
-        self.ffn = PositionwiseFeedForward(dim, ffn_hidden)
+        self.ffn = PositionwiseFeedForward(dim, ffn_hidden, dropout=dropout)
         self.norm2 = CustomLayerNorm(dim)
         self.dropout2 = nn.Dropout(p=dropout)
 
@@ -29,7 +29,6 @@ class CustomEncoderLayer(nn.Module):
         x = self.multiheadatt(x, x, x, mask=mask)
 
         # add norm
-
         x = self.norm1(x + _x)
         x = self.dropout1(x)
 
@@ -45,28 +44,28 @@ class CustomEncoderLayer(nn.Module):
 
 
 class CustomEncoder(nn.Module):
-    def __init__(self, vocab_size, max_len, d_embed, ffn_hidden, n_head, n_layers, dropout):
+    def __init__(self, vocab_size, max_len, dim, ffn_hidden, n_head, n_layers, dropout=0.1):
         """
         Encoder (n x encode layer)
         :param vocab_size: Input vocab size for embedding
         :param max_len: Maximum length of position embedding
-        :param d_embed: Embedding dimension
+        :param dim: Embedding dimension
         :param ffn_hidden: Number of hidden nodes of feed forward layer
         :param n_head: Number of head in multi head attention
         :param n_layers: Number of repeated encoder layers
         :param dropout: Dropout rate of encoder
         """
         super(CustomEncoder, self).__init__()
-        self.embed = nn.Embedding(vocab_size, d_embed, padding_idx=1)
-        self.position = PositionEncoding(d_embed, dropout=dropout, max_len=max_len)
+        self.embed = nn.Embedding(vocab_size, dim, padding_idx=1)
+        self.position = PositionEncoding(dim, dropout=dropout, max_len=max_len)
 
-        self.layers = nn.ModuleList([CustomEncoderLayer(d_embed,
+        self.layers = nn.ModuleList([CustomEncoderLayer(dim,
                                                         n_head,
                                                         ffn_hidden,
                                                         dropout)
                                      for _ in range(n_layers)])
 
-    def forward(self, x, mask):
+    def forward(self, x, mask=None):
         x = self.embed(x)
         x = self.position(x)
 

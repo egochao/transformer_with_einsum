@@ -11,10 +11,10 @@ class PositionEncoding(nn.Module):
     MODE_ADD = 'ADD'
     MODE_CONCAT = 'CONCAT'
 
-    def __init__(self, embedding_dim, dropout=0.0, max_len=5000, mode="ADD"):
+    def __init__(self, dim, dropout=0.0, max_len=5000, mode="ADD"):
         """
         Sinusoidal encoding of position, fix during training
-        :param embedding_dim: Embedding dimension (equal to the input dimension in case of mode ADD)
+        :param dim: Embedding dimension (equal to the input dimension in case of mode ADD)
         :param dropout: Dropout rate of final output
         :param max_len: Maximum len of input sequence length
         :param mode: Type of merging input and position encoding
@@ -25,10 +25,10 @@ class PositionEncoding(nn.Module):
         self.mode = mode
 
         # Compute the positional encodings once in log space.
-        pe = torch.zeros(max_len, embedding_dim)
+        pe = torch.zeros(max_len, dim)
         position = torch.arange(0, max_len).unsqueeze(1)
-        div_term = torch.exp(torch.arange(0, embedding_dim, 2) *
-                             -(math.log(10000.0) / embedding_dim))
+        div_term = torch.exp(torch.arange(0, dim, 2) *
+                             -(math.log(10000.0) / dim))
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
         pe = pe.unsqueeze(0)
@@ -53,20 +53,20 @@ class PositionEmbedding(nn.Module):
         torch.nn.init.xavier_normal_(self.weight)
 
     def __init__(self,
-                 embedding_dim,
+                 dim,
                  dropout=0.0,
                  max_len=512,
                  mode=MODE_ADD):
         """
         Learned encoding of postion, trainable
-        :param embedding_dim: Embedding dimension (equal to the input dimension in case of mode ADD)
+        :param dim: Embedding dimension (equal to the input dimension in case of mode ADD)
         :param dropout: Dropout rate of final output
         :param max_len: Maximum len of input sequence length
         :param mode: Type of merging input and position encoding
         """
         super(PositionEmbedding, self).__init__()
         self.num_embeddings = max_len
-        self.embedding_dim = embedding_dim
+        self.embedding_dim = dim
         self.dropout = nn.Dropout(p=dropout)
         self.mode = mode
         if self.mode == self.MODE_EXPAND:
