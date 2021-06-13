@@ -58,7 +58,6 @@ class CustomEncoder(nn.Module):
         super(CustomEncoder, self).__init__()
         self.embed = nn.Embedding(vocab_size, dim, padding_idx=1)
         self.position = PositionEncoding(dim, dropout=dropout, max_len=max_len)
-
         self.layers = nn.ModuleList([CustomEncoderLayer(dim,
                                                         n_head,
                                                         ffn_hidden,
@@ -68,8 +67,6 @@ class CustomEncoder(nn.Module):
     def forward(self, x, mask=None):
         x = self.embed(x)
         x = self.position(x)
-
         for layer in self.layers:
             x = layer(x, mask)
-
         return x

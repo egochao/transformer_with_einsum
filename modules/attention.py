@@ -13,7 +13,7 @@ class ScaleDotProductAttention(nn.Module):
         self.dropout_rate = dropout
         self.dropout = nn.Dropout(dropout)
 
-    def forward(self, q, k, v, mask=None, e=-np.inf):
+    def forward(self, q, k, v, mask=None, e=1e-12):
 
         if len(q.size()) == 4:
             batch, head, length, dim = k.size()
@@ -24,7 +24,7 @@ class ScaleDotProductAttention(nn.Module):
         scale_product = product * dim ** -0.5
 
         if mask is not None:
-            scale_product = scale_product.mask_fill(mask, e)
+            scale_product = scale_product.masked_fill(mask == 0, e)
 
         attention = self.softmax(scale_product)
         if len(q.size()) == 4:
@@ -61,9 +61,9 @@ class CustomMultiHeadAttention(nn.Module):
         q, k, v = self.w_q(q), self.w_k(k), self.w_v(v)
         # split dim to n_head
         q, k, v = self.split(q), self.split(k), self.split(v)
-
+        # print(v)
         out, attention = self.attention(q, k, v, mask=mask)
-
+        # print(out)
         out = self.concat(out)
         out = self.w_cat(out)
         return out
@@ -76,7 +76,8 @@ class CustomMultiHeadAttention(nn.Module):
         """
         batch, length, d_input = tensor.size()
         assert d_input == self.dim, "Input dimension mismatch with defined MultiHeadAttention"
-        d_tensor = self.dim // self.n_head
+        d_tensor = d_input // self.n_head
+        # print(d_tensor, d_input, self.n_head)
         tensor = tensor.view(batch, self.n_head, length, d_tensor)
         return tensor
 

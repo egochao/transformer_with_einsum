@@ -66,8 +66,8 @@ class CustomDecoder(nn.Module):
         self.position = PositionEncoding(dim, dropout=dropout, max_len=max_len)
 
         self.layers = nn.ModuleList([CustomDecoderLayer(dim,
-                                                        ffn_hidden,
                                                         n_head,
+                                                        ffn_hidden,
                                                         dropout)
                                      for _ in range(n_layers)])
 
