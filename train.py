@@ -61,8 +61,6 @@ def train(model, iterator, optimizer, criterion, clip):
 
         optimizer.zero_grad()
         output = model(src, trg[:, :-1])
-        # print(output)
-        # print(output.shape)
         output_reshape = output.contiguous().view(-1, output.shape[-1])
         trg = trg[:, 1:].contiguous().view(-1)
 
