@@ -1,8 +1,27 @@
-# Transformer from scratch 
+# Transformer with einsum 
 
 Based on https://github.com/hyunwoongko/transformer
 
-1 Implementation difference from the original 
+## Requirements:
+
+Dataset : Multi30K - German - English traslation : https://arxiv.org/abs/1605.00459
+
+Dataset is loaded by torchtext(so you don't have to download anythings)
+
+1. Install torch by https://pytorch.org/get-started/locally/
+2. Install requirements.txt
+3. Download token data for German and English
+```
+python -m spacy download en_core_web_sm
+python -m spacy download de_core_news_sm
+```
+
+##Train Model : 
+```
+python train.py
+```
+
+###1 Implementation difference from the original 
 
 ### Build attention mechanism base on einsum method 
 
