@@ -1,4 +1,9 @@
 # Transformer with einsum 
+Motivation form https://rockt.github.io/2018/04/30/einsum
+
+Einsum is convenient way to do matrix manipulation and should be used more widely.
+
+Note: the current implementation of einsum is slow in pytorch and there are work to be done to make it faster.
 
 Based on https://github.com/hyunwoongko/transformer
 
@@ -33,17 +38,18 @@ class ScaleDotProductAttention(nn.Module):
         """
         super(ScaleDotProductAttention, self).__init__()
         self.softmax = nn.Softmax(dim=-1)
-        self.dropout_rate = dropout
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, q, k, v, mask=None, e=1e-12):
 
+        # cover attention and multi-head attention
         if len(q.size()) == 4:
             batch, head, length, dim = k.size()
             product = torch.einsum('b h i d, b h j d -> b h i j', q, k)
         else:
             batch, length, dim = k.size()
             product = torch.einsum('b i d, b j d -> b i j', q, k)
+        
         scale_product = product * dim ** -0.5
 
         if mask is not None:
