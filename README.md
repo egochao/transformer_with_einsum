@@ -3,7 +3,7 @@ Motivation form https://rockt.github.io/2018/04/30/einsum
 
 Einsum is convenient way to do matrix manipulation and should be used more widely.
 
-Note: the current implementation of einsum is slow in pytorch and there are work to be done to make it faster.
+Note: the current implementation of einsum is slow in pytorch and there are works to be done to make it faster.
 
 Based on https://github.com/hyunwoongko/transformer
 
